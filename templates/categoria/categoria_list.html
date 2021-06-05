@@ -1,0 +1,31 @@
+{%extends 'base/base.html'%}
+{%block title%}Categorias{% endblock %}
+{%block content%}
+
+<div class="container">
+    {% include 'base/msg_sucesso.html' %}
+</div>
+
+
+<div class="my-2">
+    <div class="header-btn">
+        <a href="{{add_url}}" class="btn btn-success"><span>Nova Categoria</span></a>
+        <button class="btn btn-red btn-remove"></button>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Nome</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for categoria in categorias %}
+        <tr>
+            <td><a href="{% url 'core:editcategoria' categoria.id %}">{{ categoria }}</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{%endblock%}

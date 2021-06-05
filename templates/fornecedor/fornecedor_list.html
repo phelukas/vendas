@@ -1,0 +1,33 @@
+{%extends 'base/base.html'%}
+{%block title%}Fornecedores{% endblock %}
+{%block content%}
+
+<div class="container">
+    {% include 'base/msg_sucesso.html' %}
+</div>
+
+
+<div class="my-2">
+    <div class="header-btn">
+        <a href="{{add_url}}" class="btn btn-success"><span>Novo Fornecedor</span></a>
+        <button class="btn btn-red btn-remove"></button>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">cnpj</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for fornecedor in fornecedores %}
+        <tr>
+            <td><a href="{% url 'core:editfornecedor' fornecedor.id %}">{{ fornecedor.nome }}</a></td>
+            <td>{{ fornecedor.cnpj }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{%endblock%}

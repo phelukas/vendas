@@ -1,0 +1,50 @@
+{%extends 'base/base.html'%}
+
+{%block title%}Perfil{%endblock%}
+{%block content%}
+
+<div class="block-header">
+  <h2>PERFIL</h2>
+</div>
+
+{% include 'base/msg_sucesso.html' %}
+
+<div class="block-content">
+  <div class="card">
+    <div class="header">
+      <div class="header-btn">
+        <a href="{% url 'login:editarperfilview' %}" class="btn btn-primary">EDITAR</a>
+      </div>
+    </div>
+    <div class="body perfil-user">
+      <div class="row">
+        <div class="col-md-8">
+          <table class="table">
+            <tbody>
+              <tr>
+                <td>Status:</td>
+                <td>{% if request.user.is_superuser %}Super Usuario{%else%}Usuário{%endif%}</td>
+              </tr>
+              <tr>
+                <td>Nome:</td>
+                <td>{{request.user.first_name}}</td>
+              </tr>
+              <tr>
+                <td>Sobrenome:</td>
+                <td>{{request.user.last_name}}</td>
+              </tr>
+              <tr>
+                <td>Email:</td>
+                <td>{{request.user.email}}</td>
+              </tr>
+              <tr>
+            </tbody>
+          </table>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{%endblock%}
