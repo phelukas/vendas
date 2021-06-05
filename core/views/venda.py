@@ -1,53 +1,55 @@
 from django.views.generic import ListView, CreateView
 from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 
-from core.models import Produtos
+from core.models import Ordem, Item
 
-from core.forms import ProdutoForm
+from core.forms import OrdemForm
 
 
-class PodutosLista(ListView):
+class VendasLista(ListView):
 
-    template_name = 'produtos/produtos_list.html'
-    context_object_name = 'produtos'
+    template_name = 'vendas/vendas_list.html'
+    context_object_name = 'vendas'
 
     def get_context_data(self, **kwargs):
-        context = super(PodutosLista, self).get_context_data(**kwargs)
-        context['add_url'] = reverse_lazy('core:addproduto')
+        context = super(VendasLista, self).get_context_data(**kwargs)
+        context['add_url'] = reverse_lazy('core:addvenda')
         return context
 
     def get_queryset(self):
-        queryset = Produtos.objects.all()
+        queryset = Ordem.objects.all()
         return queryset
 
 
-class ProdutosAdicionar(CreateView):
+class VendasAdicionar(CreateView):
 
-    template_name = 'produtos/produtos_add.html'
-    success_url = reverse_lazy('core:listprodutos')
-    model = Produtos
+    template_name = 'vendas/vendas_add.html'
+    success_url = reverse_lazy('core:listvendas')
+    model = Ordem
 
-    def get_context_data(self, **kwargs):
-        context = super(ProdutosAdicionar, self).get_context_data(**kwargs)
-        context['add_url'] = reverse_lazy('core:addproduto')
-        return context
+    # def get_success_url(self):
+    #     success_url = reverse('core:checkout', kwargs={
+    #         'pk': self.object.pk,
+    #     })
+    #     return success_url
 
     def get(self, request, *args, **kwargs):
         self.object = None
 
-        produtoform = ProdutoForm(prefix='produtoform')
+        vendaform = OrdemForm(prefix='vendaform')
 
-        return self.render_to_response(self.get_context_data(form=produtoform))
+        return self.render_to_response(self.get_context_data(form=vendaform))
 
     def post(self, request, *args, **kwargs):
         self.object = None
 
-        produtoform = ProdutoForm(
-            request.POST, request.FILES, prefix='produtoform', request=request)
+        vendaform = OrdemForm(
+            request.POST, request.FILES, prefix='vendaform', request=request)
 
-        if produtoform.is_valid():
-            self.object = produtoform.save(commit=False)
+        if vendaform.is_valid():
+            self.object = vendaform.save(commit=False)
             self.object.save()
-            return self.form_valid(produtoform)
+            return self.form_valid(vendaform)
 
-        return self.form_invalid(form=produtoform)
+        return self.form_invalid(form=vendaform)

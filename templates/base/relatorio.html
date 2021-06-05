@@ -1,0 +1,61 @@
+{%extends 'base/base.html'%}
+{%block title%}Relatorios{% endblock %}
+{%block content%}
+
+<section class="container">
+    <div class="container my-2">
+        <form class="form-inline" method="GET">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <input type="checkbox" id="allcategorias" name="allcategorias">
+                        <label for="allcategorias">
+                            Todas vendas
+                        </label>
+                    </div>
+                    <div class="col">
+                        <input type="checkbox" id="vendas_finalizadas" name="vendas_finalizadas">
+                        <label for="vendas_finalizadas">
+                            Vendas Concluída
+                        </label>
+                    </div>
+                    <div class="col">
+                        <input type="checkbox" id="vendas_aguardando" name="vendas_aguardando">
+                        <label for="vendas_aguardando">
+                            Vendas Não Concluída
+                        </label>
+                    </div>
+                    <div class="col">
+                        <label for="clientes">Clientes</label>
+                        <select id="clientes" name="clientes">
+                            <option selected>Todos</option>
+
+                        </select>
+                    </div>
+                    <div class="col">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Categoria</th>
+                <th scope="col">Quantidade</th>
+                <th scope="col">Quantidade em estoque</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produto in produtos %}
+            <tr>
+                <td>{{ produto.categoria }}</td>
+                <td>{{ produto.quantidade }}</td>
+                <td>{{ produto.categoria }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{%endblock%}

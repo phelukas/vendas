@@ -8,15 +8,16 @@ class Ordem(models.Model):
     nome = models.CharField("Nome Completo", max_length=250)
     email = models.EmailField()
     pago = models.BooleanField(default=False)
+    itens = models.ForeignKey('core.Item', related_name='Itens', on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Pedido {self.id}"
 
     def get_total_price(self):
-        total = sum(item.get_total_price() for item in self.items.all())
+        total = sum(item.get_total_price() for item in self.itens.all())
         return total
 
-    def get_descricao(self):
+    def get_descricao(self): 
         return ", ".join(
             [f"{item.quantidade}x {item.produto.nome}" for item in self.items.all()]
         )                

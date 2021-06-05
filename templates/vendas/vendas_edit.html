@@ -1,5 +1,5 @@
 {%extends 'base/base.html'%}
-{%block title%}Editar Produto{%endblock%}
+{%block title%}Editar Venda{%endblock%}
 {%block content%}
 <div class="container">
     <div class="row gutters">
@@ -10,7 +10,7 @@
                     <div class="card-body">
                         <div class="row gutters">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                <h6 class="mb-2 text-primary">Informações do Produto</h6>
+                                <h6 class="mb-2 text-primary">Informações da venda</h6>
                             </div>
                             {% for field in form %}
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
@@ -22,7 +22,7 @@
                             {% endfor %}
                         </div>
                         <button type="submit" class="btn btn-primary my-4">Atualizar</button>
-                        <a href="{% url 'core:delproduto' produtos.id %}">
+                        <a href="">
                             <button type="button" class="btn btn-danger my-4">Deletar</button>
                         </a>
                     </div>

@@ -1,6 +1,6 @@
-from django.views.generic import ListView, CreateView
-from django.urls import reverse_lazy, reverse
-from django.views.generic.base import TemplateView, View
+from django.views.generic import ListView, CreateView, DeleteView
+from django.urls import reverse_lazy
+from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView
 
 from core.models import Produtos
@@ -88,3 +88,9 @@ class ProdutoEdit(UpdateView):
 
             return self.form_valid(produtoform)
         return self.form_invalid(form=produtoform)
+
+class ProdutoDelete(DeleteView):
+
+    model = Produtos
+    template_name = 'produtos/produtos_confirm_delete.html'
+    success_url = reverse_lazy('core:listprodutos')        

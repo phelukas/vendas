@@ -1,0 +1,45 @@
+{%extends 'base/base.html'%}
+{%block title%}Vendas{% endblock %}
+{%block content%}
+
+<div class="container">
+    {% include 'base/msg_sucesso.html' %}
+</div>
+
+
+<div class="container my-2">
+    <div class="header-btn">
+        <a href="{{add_url}}" class="btn btn-success"><span>Nova venda</span></a>
+        <button class="btn btn-red btn-remove"></button>
+    </div>
+</div>
+
+
+<section class="container">
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Cliente</th>
+                <th scope="col">E-mail(cliente)</th>
+                <th scope="col">Finalizada</th>
+                <th scope="col">Produtos</th>
+                <th scope="col">Preço</th>
+                <th scope="col">Quantidade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for venda in vendas %}
+            <tr>
+                <td><a href="">{{ venda. }}</a></td>
+                <td>{{ venda. }}</td>
+                <td>{{ venda. }}</td>
+                <td>{{ venda. }}</td>
+                <td>{{ venda. }}</td>
+                <td>{{ venda. }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{%endblock%}
