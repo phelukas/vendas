@@ -5,10 +5,13 @@ from django.views.generic.edit import UpdateView
 from django.contrib import messages
 from django.shortcuts import redirect
 
-from core.models import Produtos
+from core.models import Produtos, Fornecedor, Categoria
 
 from core.forms import ProdutoForm
 
+
+def is_valid_queryparam(param):
+    return param != '' and param != 'Todos' and param is not None
 
 class Index(TemplateView):
     template_name = 'base/index.html'
@@ -22,11 +25,37 @@ class PodutosLista(ListView):
     def get_context_data(self, **kwargs):
         context = super(PodutosLista, self).get_context_data(**kwargs)
         context['add_url'] = reverse_lazy('core:addproduto')
+        context['todos_fornecedores'] = Fornecedor.objects.all()
+        context['todas_categorias'] = Categoria.objects.all()
         return context
 
     def get_queryset(self):
         queryset = Produtos.objects.all()
         return queryset
+
+    def get(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+
+        forncedores = request.GET.get('forncedores')
+        categorias = request.GET.get('categorias')
+
+        if is_valid_queryparam(categorias):
+            print(categorias)
+            self.object_list = self.object_list.filter(
+                categoria__nome=categorias
+            )
+        else:
+            print(categorias)
+            self.object_list = self.object_list.all() 
+
+        if is_valid_queryparam(forncedores):
+            self.object_list = self.object_list.filter(
+                fornecedor__cnpj=forncedores
+            )
+        else:
+            self.object_list = self.object_list.all()   
+
+        return self.render_to_response(self.get_context_data())
 
 
 class ProdutosAdicionar(CreateView):

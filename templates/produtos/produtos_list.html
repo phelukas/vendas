@@ -5,7 +5,7 @@
 <div class="container">
     {% include 'base/msg_sucesso.html' %}
     {% include 'base/form_error_alert.html' %}
-  </div>
+</div>
 
 
 <div class="container my-2">
@@ -17,6 +17,31 @@
 
 
 <section class="container">
+    <form class="form-inline" method="GET">
+        <div class="row">
+            <div class="col">
+                <label for="forncedores">Fornecedor</label>
+                <select id="forncedores" name="forncedores">
+                    <option selected>Todos</option>
+                    {% for fornecedor in todos_fornecedores %}
+                    <option value="{{ fornecedor }}">{{ fornecedor }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col">
+                <label for="categorias">Categoria</label>
+                <select id="categorias" name="categorias">
+                    <option selected>Todos</option>
+                    {% for categoria in todas_categorias %}
+                    <option value="{{ categoria }}">{{ categoria }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="col">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
 
     <table class="table table-striped">
         <thead>
