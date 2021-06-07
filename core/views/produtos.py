@@ -2,6 +2,8 @@ from django.views.generic import ListView, CreateView, DeleteView
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView
+from django.contrib import messages
+from django.shortcuts import redirect
 
 from core.models import Produtos
 
@@ -29,9 +31,18 @@ class PodutosLista(ListView):
 
 class ProdutosAdicionar(CreateView):
 
+    model = Produtos
     template_name = 'produtos/produtos_add.html'
     success_url = reverse_lazy('core:listprodutos')
-    model = Produtos
+    success_message = "Produto( <b>%(descricao)s</b>) adicionado com sucesso ."
+
+    def get_success_message(self, cleaned_data):
+        return self.success_message % dict(cleaned_data, descricao=str(self.object))
+
+    def form_valid(self, form):
+        messages.success(
+            self.request, self.get_success_message(form.cleaned_data))
+        return redirect(self.get_success_url())            
 
     def get_context_data(self, **kwargs):
         context = super(ProdutosAdicionar, self).get_context_data(**kwargs)
@@ -62,6 +73,15 @@ class ProdutoEdit(UpdateView):
 
     template_name = 'produtos/produtos_edit.html'
     success_url = reverse_lazy('core:listprodutos')
+    success_message = "Produto( <b>%(descricao)s</b>) editado com sucesso ."
+
+    def get_success_message(self, cleaned_data):
+        return self.success_message % dict(cleaned_data, descricao=str(self.object))
+
+    def form_valid(self, form):
+        messages.success(
+            self.request, self.get_success_message(form.cleaned_data))
+        return redirect(self.get_success_url()) 
 
     def get_object(self, queryset=None):
         pk = self.kwargs.get(self.pk_url_kwarg)
@@ -94,3 +114,8 @@ class ProdutoDelete(DeleteView):
     model = Produtos
     template_name = 'produtos/produtos_confirm_delete.html'
     success_url = reverse_lazy('core:listprodutos')        
+    success_message = "Produto deletado com sucesso"
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, self.success_message)
+        return super(ProdutoDelete, self).delete(request, *args, **kwargs)    

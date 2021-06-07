@@ -1,6 +1,8 @@
 from django.views.generic import ListView, CreateView, DeleteView
 from django.urls import reverse_lazy
 from django.views.generic.edit import UpdateView
+from django.contrib import messages
+from django.shortcuts import redirect
 
 from core.models import Fornecedor
 
@@ -24,9 +26,18 @@ class FornecedorLista(ListView):
 
 class FornecedorAdd(CreateView):
 
+    model = Fornecedor
     template_name = 'fornecedor/fornecedor_add.html'
     success_url = reverse_lazy('core:listfornecedores')
-    model = Fornecedor
+    success_message = "Fornecedor( <b>%(descricao)s</b>) adicionado com sucesso ."
+
+    def get_success_message(self, cleaned_data):
+        return self.success_message % dict(cleaned_data, descricao=str(self.object))
+
+    def form_valid(self, form):
+        messages.success(
+            self.request, self.get_success_message(form.cleaned_data))
+        return redirect(self.get_success_url())     
 
     def get(self, request, *args, **kwargs):
         self.object = None
@@ -53,6 +64,15 @@ class FornecedorEdit(UpdateView):
 
     template_name = 'fornecedor/fornecedor_edit.html'
     success_url = reverse_lazy('core:listfornecedores')
+    success_message = "Fornecedor( <b>%(descricao)s</b>) editado com sucesso ."
+
+    def get_success_message(self, cleaned_data):
+        return self.success_message % dict(cleaned_data, descricao=str(self.object))
+
+    def form_valid(self, form):
+        messages.success(
+            self.request, self.get_success_message(form.cleaned_data))
+        return redirect(self.get_success_url())     
 
     def get_object(self, queryset=None):
         pk = self.kwargs.get(self.pk_url_kwarg)
@@ -85,3 +105,8 @@ class FornecedorDelete(DeleteView):
     model = Fornecedor
     template_name = 'fornecedor/pacientes_confirm_delete.html'
     success_url = reverse_lazy('core:listfornecedores')
+    success_message = "Fornecedor deletado com sucesso"
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, self.success_message)
+        return super(FornecedorDelete, self).delete(request, *args, **kwargs)        

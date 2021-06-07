@@ -1,5 +1,7 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+from django.contrib import messages
+from django.shortcuts import redirect
 
 from core.models import Categoria
 
@@ -26,6 +28,15 @@ class CategoriaAdd(CreateView):
     template_name = 'categoria/categoria_add.html'
     model = Categoria
     success_url = reverse_lazy('core:listcategorias')
+    success_message = "Categoria( <b>%(descricao)s</b>) adicionado com sucesso ."
+
+    def get_success_message(self, cleaned_data):
+        return self.success_message % dict(cleaned_data, descricao=str(self.object))
+
+    def form_valid(self, form):
+        messages.success(
+            self.request, self.get_success_message(form.cleaned_data))
+        return redirect(self.get_success_url())       
 
     def get(self, request, *args, **kwargs):
         self.object = None
@@ -52,6 +63,15 @@ class CategoriaEdit(UpdateView):
 
     template_name = 'categoria/categoria_edit.html'
     success_url = reverse_lazy('core:listcategorias')
+    success_message = "Categoria( <b>%(descricao)s</b>) adicionado com sucesso ."
+
+    def get_success_message(self, cleaned_data):
+        return self.success_message % dict(cleaned_data, descricao=str(self.object))
+
+    def form_valid(self, form):
+        messages.success(
+            self.request, self.get_success_message(form.cleaned_data))
+        return redirect(self.get_success_url())       
 
     def get_object(self, queryset=None):
         pk = self.kwargs.get(self.pk_url_kwarg)
@@ -84,3 +104,8 @@ class CategoriaDelete(DeleteView):
     model = Categoria
     template_name = 'categoria/categoria_confirm_delete.html'
     success_url = reverse_lazy('core:listcategorias')
+    success_message = "Categoria deletado com sucesso"
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, self.success_message)
+        return super(CategoriaDelete, self).delete(request, *args, **kwargs)      

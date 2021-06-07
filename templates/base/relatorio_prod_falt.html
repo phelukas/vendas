@@ -1,0 +1,32 @@
+{%extends 'base/base.html'%}
+{%block title%}Produtos em falta no estoque{% endblock %}
+{%block content%}
+
+<section class="container">
+    <div class="container my-3">
+        <h1>Produtos em falta no estoque</h1>
+    </div>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Produto</th>
+                <th scope="col">Quantidade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produto in produtos %}
+            <tr>
+                <td>{{ produto }}</td>
+                <td>{{ produto.quantidade }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="btn-group" role="group" aria-label="Basic outlined example">
+        <a href="{% url 'core:relatorio_csv' %}">
+            <button type="button" class="btn btn-outline-primary">Baixar CSV</button>
+        </a>
+    </div>
+</section>
+{%endblock%}

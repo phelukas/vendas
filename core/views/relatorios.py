@@ -1,3 +1,4 @@
+from django.db.models.aggregates import Sum
 from django.views.generic import ListView, CreateView, DeleteView
 from django.urls import reverse_lazy
 from django.views.generic.base import View
@@ -19,8 +20,9 @@ class ListaProdutosView(ListView):
     context_object_name = 'produtos'
 
     def get_queryset(self):
-        queryset = Produtos.objects.select_related('categoria').annotate(Count('quantidade')).distinct   
+        queryset = Sum('quantidade', distinct=True)
         print(queryset)
+
         return queryset
 
     def quantidade_categoria(self):
@@ -80,66 +82,66 @@ class ListaProdutosView(ListView):
         context['quantidade_categoria'] = self.quantidade_categoria()
         return context
 
+class ProdutosFaltaEstoque(ListView):
 
-# class Exportar_csv(View):
+    template_name = "base/relatorio_prod_falt.html"
+    context_object_name = 'produtos'    
 
-#     def get(self, request, *args, **kwargs):
+    def get_queryset(self):
+        queryset = Produtos.objects.filter(quantidade=0)
+        return queryset
 
+class FornecedoresFaltaEstoque(ListView):
 
-#         self.object = self.get_object()
-#         paciente = self.object
-#         endereco = paciente.endereco_paciente
-#         dados_sociodemograficos = paciente.socio_paciente
-#         dados_clinicos = paciente.clinico_paciente
-#         diagnostico_medio = paciente.diagmedico_paciente
-#         comorbidade = paciente.comorbidades_paciente
-#         diagnostico_obesidade = paciente.diagobesidade_paciente
-#         diagnostico_sedentario = paciente.diagsedentario_paciente
-#         response = HttpResponse(
-#             content_type='text/csv',
-#             headers={
-#                 'Content-Disposition': f'attachment; filename="Paciente {paciente.first_name}.csv"'},
-#         )
-#         writer = csv.writer(response)
-#         writer.writerow(
-#             ['Nome', 'E-mail', 'CPF', 'Telefone',
-#              'Endereço', 'Numero', 'Bairro', 'Complemento', 'Cidade - Estado', 'CEP',
-#              'Estado civil', 'Cor/Raça', 'Ocupação', 'Religião', 'Anos de estudo', 'Sexo', 'Renda familiar', 'Com quantas pessoas vivem',
-#              ]
-#         )
+    template_name = "base/relatorio_forne_falt.html"
+    context_object_name = 'produtos'    
 
-#         writer.writerow(
-#             [paciente.first_name + paciente.last_name, paciente.email, paciente.cpf, paciente.telefone,
+    def get_queryset(self):
+        queryset = Produtos.objects.filter(quantidade=0)
+        print(queryset)
 
-#              endereco.endereco, endereco.numero, endereco.bairro, endereco.complemento, endereco.cidade +
-#              '-' + endereco.estado, endereco.cep,
-
-#              dados_sociodemograficos.estado_civil, dados_sociodemograficos.corraca, dados_sociodemograficos.ocupacao, dados_sociodemograficos.religiao,
-#              dados_sociodemograficos.anos_estudo, dados_sociodemograficos.sexo, dados_sociodemograficos.renda_familiar, dados_sociodemograficos.pessoas_vivem]
-#         )
-
-#         return response
+        return queryset
 
 
+class Exportar_csv_prod_falta(View):
 
-from django.db import models
+    def get(self, request, *args, **kwargs):
 
-class Author(models.Model):
-    name = models.CharField(max_length=100)
-    age = models.IntegerField()
+        queryset = Produtos.objects.filter(quantidade=0)         
 
-class Publisher(models.Model):
-    name = models.CharField(max_length=300)
+        response = HttpResponse(
+            content_type='text/csv',
+            headers={
+                'Content-Disposition': f'attachment; filename="Produtos em Falta.csv"'},
+        )
+        writer = csv.writer(response)
+        writer.writerow(
+            ['Produto', 'Quantidade']
+        )
+        for produto in queryset:    
+            writer.writerow(
+                [produto,0]
+            )
+        return response
 
-class Book(models.Model):
-    name = models.CharField(max_length=300)
-    pages = models.IntegerField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    rating = models.FloatField()
-    authors = models.ManyToManyField(Author)
-    publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE)
-    pubdate = models.DateField()
+class Exportar_csv_forne_falta(View):
 
-class Store(models.Model):
-    name = models.CharField(max_length=300)
-    books = models.ManyToManyField(Book)
+    def get(self, request, *args, **kwargs):
+
+        queryset = Produtos.objects.filter(quantidade=0)
+
+        response = HttpResponse(
+            content_type='text/csv',
+            headers={
+                'Content-Disposition': f'attachment; filename="Fornecedor Produtos Falta.csv"'},
+        )
+        writer = csv.writer(response)
+        writer.writerow(
+            ['Fornecedor', 'Produto']
+        )
+
+        for produto in queryset:
+            writer.writerow(
+                [produto.fornecedor,produto]
+            )
+        return response
