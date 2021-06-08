@@ -7,8 +7,10 @@ app_name = 'core'
 
 urlpatterns = [
     url(r'^home/$', views.Index.as_view(), name='index'),
-    url(r'^exportar_csv/$', views.Exportar_csv_prod_falta.as_view(), name='relatorio_csv'),
-    url(r'^exportar_csv/fornecedor$', views.Exportar_csv_forne_falta.as_view(), name='relatorio_csv_forne_falta'),
+    url(r'^exportar_csv/profalta/$', views.Exportar_csv_prod_falta.as_view(), name='relatorio_csv'),
+    url(r'^exportar_csv/fornefalta/$', views.Exportar_csv_forne_falta.as_view(), name='relatorio_csv_forne_falta'),
+    url(r'^exportar_execl/fornefalta/$', views.ExportarExcel_forne_falta.as_view(), name='relatorio_excel_forne_falta'),
+    url(r'^exportar_execl/prodfalta/$', views.ExportarExcel_prod_falta.as_view(), name='relatorio_excel_prod_falta'),
 
     url(r'^produtos/$', views.PodutosLista.as_view(), name='listprodutos'),
     url(r'^addproduto/$', views.ProdutosAdicionar.as_view(), name='addproduto'),

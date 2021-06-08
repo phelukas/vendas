@@ -3,10 +3,11 @@ from django.views.generic import ListView, CreateView, DeleteView
 from django.urls import reverse_lazy
 from django.views.generic.base import View
 from django.views.generic.edit import UpdateView
-import csv
 from django.db.models import Count
 from django.http import HttpResponse, response
 from core.models import Produtos, Categoria, Fornecedor, Item, Ordem
+import csv
+import xlwt
 
 
 # Função para verificar parametro para filtro
@@ -145,3 +146,73 @@ class Exportar_csv_forne_falta(View):
                 [produto.fornecedor,produto]
             )
         return response
+
+
+class ExportarExcel_forne_falta(View):
+    
+    def get(self, request):
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="Fornecedor Produtos Falta.xls"'
+
+        wb = xlwt.Workbook(encoding='utf-8')
+        ws = wb.add_sheet('Fornecedor Produtos Falta')
+
+        row_num = 0
+
+        font_style = xlwt.XFStyle()
+        font_style.font.bold = True
+
+        columns = ['Id', 'Fornecedor','Produto']
+
+        for col_num in range(len(columns)):
+            ws.write(row_num, col_num, columns[col_num], font_style)
+
+        font_style = xlwt.XFStyle()            
+
+        produtos = Produtos.objects.filter(quantidade=0)
+
+        row_num = 1
+
+        for produto in produtos:
+            print(produto.fornecedor)
+            ws.write(row_num, 0, produto.id, font_style)
+            ws.write(row_num, 1, str(produto.fornecedor), font_style)
+            ws.write(row_num, 2, produto.nome, font_style)
+            row_num += 1
+
+        wb.save(response)
+        return response             
+
+class ExportarExcel_prod_falta(View):
+    
+    def get(self, request):
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="Produtos em Falta.xls"'
+
+        wb = xlwt.Workbook(encoding='utf-8')
+        ws = wb.add_sheet('Produtos em Falta')
+
+        row_num = 0
+
+        font_style = xlwt.XFStyle()
+        font_style.font.bold = True
+
+        columns = ['Id','Produto', 'Quantidade']
+
+        for col_num in range(len(columns)):
+            ws.write(row_num, col_num, columns[col_num], font_style)
+
+        font_style = xlwt.XFStyle()            
+
+        produtos = Produtos.objects.filter(quantidade=0)
+
+        row_num = 1
+
+        for produto in produtos:
+            ws.write(row_num, 0, produto.id, font_style)
+            ws.write(row_num, 1, produto.nome, font_style)
+            ws.write(row_num, 2, produto.quantidade, font_style)
+            row_num += 1
+
+        wb.save(response)
+        return response 

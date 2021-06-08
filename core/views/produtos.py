@@ -4,6 +4,8 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView
 from django.contrib import messages
 from django.shortcuts import redirect
+import xlwt
+from django.http import HttpResponse
 
 from core.models import Produtos, Fornecedor, Categoria
 
@@ -13,20 +15,62 @@ from core.forms import ProdutoForm
 def is_valid_queryparam(param):
     return param != '' and param != 'Todos' and param is not None
 
+def ExportarExcel(queryset):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="Produtos em Falta.xls"'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('i')
+
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = ['Id','Produto', 'Quantidade']
+
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    font_style = xlwt.XFStyle() 
+
+    queryset = queryset
+
+    row_num = 1
+
+    for produto in queryset:
+        ws.write(row_num, 0, produto.id, font_style)
+        ws.write(row_num, 1, produto.nome, font_style)
+        ws.write(row_num, 2, produto.quantidade, font_style)
+        row_num += 1
+
+    # Create a StringIO object.
+    output = StringIO.StringIO()
+    # Save the workbook data to the above StringIO object.
+    wb.save(output)
+    # Reposition to the beginning of the StringIO object.
+    output.seek(0)
+    # Write the StringIO object's value to HTTP response to send the excel file to the web server client.
+    response.write(output.getvalue()) 
+
+    return response                
+
+
 class Index(TemplateView):
     template_name = 'base/index.html'
-
 
 class PodutosLista(ListView):
 
     template_name = 'produtos/produtos_list.html'
     context_object_name = 'produtos'
 
+
     def get_context_data(self, **kwargs):
         context = super(PodutosLista, self).get_context_data(**kwargs)
         context['add_url'] = reverse_lazy('core:addproduto')
         context['todos_fornecedores'] = Fornecedor.objects.all()
         context['todas_categorias'] = Categoria.objects.all()
+        context['excel'] = ExportarExcel(self.object_list)
         return context
 
     def get_queryset(self):
@@ -54,6 +98,8 @@ class PodutosLista(ListView):
             )
         else:
             self.object_list = self.object_list.all()   
+
+        print(self.object_list)            
 
         return self.render_to_response(self.get_context_data())
 

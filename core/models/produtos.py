@@ -14,6 +14,7 @@ class Fornecedor(models.Model):
     def __str__(self):
         return self.cnpj
 
+
 class Categoria(models.Model):
 
     nome = models.CharField(max_length=255, unique=True)
