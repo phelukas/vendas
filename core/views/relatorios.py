@@ -22,8 +22,6 @@ class ListaProdutosView(ListView):
 
     def get_queryset(self):
         queryset = Sum('quantidade', distinct=True)
-        print(queryset)
-
         return queryset
 
     def quantidade_categoria(self):
@@ -99,8 +97,6 @@ class FornecedoresFaltaEstoque(ListView):
 
     def get_queryset(self):
         queryset = Produtos.objects.filter(quantidade=0)
-        print(queryset)
-
         return queryset
 
 
@@ -174,7 +170,6 @@ class ExportarExcel_forne_falta(View):
         row_num = 1
 
         for produto in produtos:
-            print(produto.fornecedor)
             ws.write(row_num, 0, produto.id, font_style)
             ws.write(row_num, 1, str(produto.fornecedor), font_style)
             ws.write(row_num, 2, produto.nome, font_style)

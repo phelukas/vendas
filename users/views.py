@@ -112,6 +112,16 @@ class CriarPefilView(CreateView):
     form_class = UserCreationForm
     template_name = 'account/criar_perfil.html'
     success_url = reverse_lazy('login:loginview')
+    success_message = "Perfil criado com sucesso"
+
+    def get_success_message(self, cleaned_data):
+        return self.success_message % dict(cleaned_data, descricao=str(self.object))
+
+    def form_valid(self, form):
+        messages.success(
+            self.request, self.get_success_message(form.cleaned_data))
+        return redirect(self.get_success_url())            
+
 
     def get(self, request, *args, **kwargs):
         return super(CriarPefilView, self).get(request, *args, **kwargs)

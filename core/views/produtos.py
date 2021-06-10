@@ -15,45 +15,45 @@ from core.forms import ProdutoForm
 def is_valid_queryparam(param):
     return param != '' and param != 'Todos' and param is not None
 
-def ExportarExcel(queryset):
-    response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="Produtos em Falta.xls"'
+# def ExportarExcel(queryset):
+#     response = HttpResponse(content_type='application/ms-excel')
+#     response['Content-Disposition'] = 'attachment; filename="Produtos em Falta.xls"'
 
-    wb = xlwt.Workbook(encoding='utf-8')
-    ws = wb.add_sheet('i')
+#     wb = xlwt.Workbook(encoding='utf-8')
+#     ws = wb.add_sheet('i')
 
-    row_num = 0
+#     row_num = 0
 
-    font_style = xlwt.XFStyle()
-    font_style.font.bold = True
+#     font_style = xlwt.XFStyle()
+#     font_style.font.bold = True
 
-    columns = ['Id','Produto', 'Quantidade']
+#     columns = ['Id','Produto', 'Quantidade']
 
-    for col_num in range(len(columns)):
-        ws.write(row_num, col_num, columns[col_num], font_style)
+#     for col_num in range(len(columns)):
+#         ws.write(row_num, col_num, columns[col_num], font_style)
 
-    font_style = xlwt.XFStyle() 
+#     font_style = xlwt.XFStyle() 
 
-    queryset = queryset
+#     queryset = queryset
 
-    row_num = 1
+#     row_num = 1
 
-    for produto in queryset:
-        ws.write(row_num, 0, produto.id, font_style)
-        ws.write(row_num, 1, produto.nome, font_style)
-        ws.write(row_num, 2, produto.quantidade, font_style)
-        row_num += 1
+#     for produto in queryset:
+#         ws.write(row_num, 0, produto.id, font_style)
+#         ws.write(row_num, 1, produto.nome, font_style)
+#         ws.write(row_num, 2, produto.quantidade, font_style)
+#         row_num += 1
 
-    # Create a StringIO object.
-    output = StringIO.StringIO()
-    # Save the workbook data to the above StringIO object.
-    wb.save(output)
-    # Reposition to the beginning of the StringIO object.
-    output.seek(0)
-    # Write the StringIO object's value to HTTP response to send the excel file to the web server client.
-    response.write(output.getvalue()) 
+#     # Create a StringIO object.
+#     output = StringIO.StringIO()
+#     # Save the workbook data to the above StringIO object.
+#     wb.save(output)
+#     # Reposition to the beginning of the StringIO object.
+#     output.seek(0)
+#     # Write the StringIO object's value to HTTP response to send the excel file to the web server client.
+#     response.write(output.getvalue()) 
 
-    return response                
+#     return response                
 
 
 class Index(TemplateView):
@@ -70,7 +70,7 @@ class PodutosLista(ListView):
         context['add_url'] = reverse_lazy('core:addproduto')
         context['todos_fornecedores'] = Fornecedor.objects.all()
         context['todas_categorias'] = Categoria.objects.all()
-        context['excel'] = ExportarExcel(self.object_list)
+        context['todos_produtos'] = Produtos.objects.distinct('nome')
         return context
 
     def get_queryset(self):
@@ -82,14 +82,20 @@ class PodutosLista(ListView):
 
         forncedores = request.GET.get('forncedores')
         categorias = request.GET.get('categorias')
+        produtos = request.GET.get('produtos')
+
+        if is_valid_queryparam(produtos):
+            self.object_list = self.object_list.filter(
+                nome=produtos
+            )
+        else:
+            self.object_list = self.object_list.all() 
 
         if is_valid_queryparam(categorias):
-            print(categorias)
             self.object_list = self.object_list.filter(
                 categoria__nome=categorias
             )
         else:
-            print(categorias)
             self.object_list = self.object_list.all() 
 
         if is_valid_queryparam(forncedores):
@@ -98,8 +104,6 @@ class PodutosLista(ListView):
             )
         else:
             self.object_list = self.object_list.all()   
-
-        print(self.object_list)            
 
         return self.render_to_response(self.get_context_data())
 

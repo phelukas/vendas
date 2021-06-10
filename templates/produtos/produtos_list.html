@@ -7,14 +7,12 @@
     {% include 'base/form_error_alert.html' %}
 </div>
 
-
 <div class="container my-2">
     <div class="header-btn">
         <a href="{{add_url}}" class="btn btn-success"><span>Novo Produto</span></a>
         <button class="btn btn-red btn-remove"></button>
     </div>
 </div>
-
 
 <section class="container">
     <form class="form-inline" method="GET">
@@ -34,6 +32,15 @@
                     <option selected>Todos</option>
                     {% for categoria in todas_categorias %}
                     <option value="{{ categoria }}">{{ categoria }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col">
+                <label for="produtos">Produto</label>
+                <select id="produtos" name="produtos">
+                    <option selected>Todos</option>
+                    {% for produto in todos_produtos %}
+                    <option value="{{ produto }}">{{ produto }}</option>
                     {% endfor %}
                 </select>
             </div>
