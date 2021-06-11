@@ -83,6 +83,18 @@ class PodutosLista(ListView):
         forncedores = request.GET.get('forncedores')
         categorias = request.GET.get('categorias')
         produtos = request.GET.get('produtos')
+        fornecedor_falta = request.GET.get('fornecedor_falta')
+        categoria_falta = request.GET.get('categoria_falta')
+        produtos_falta = request.GET.get('produtos_falta')
+
+        print(produtos_falta)
+
+        if is_valid_queryparam(produtos_falta):
+            self.object_list = self.object_list.filter(
+                quantidade=0
+            )
+        else:
+            self.object_list = self.object_list.all()            
 
         if is_valid_queryparam(produtos):
             self.object_list = self.object_list.filter(
@@ -198,3 +210,58 @@ class ProdutoDelete(DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, self.success_message)
         return super(ProdutoDelete, self).delete(request, *args, **kwargs)    
+
+
+
+# <section>
+#     <form class="form-inline" method="GET">
+#         <div class="row">
+#             <div class="col">
+#                 <label for="forncedores">Fornecedor</label>
+#                 <select id="forncedores" name="forncedores">
+#                     <option selected>Todos</option>
+#                     {% for fornecedor in todos_fornecedores %}
+#                     <option value="{{ fornecedor }}">{{ fornecedor }}</option>
+#                     {% endfor %}
+#                 </select>
+
+#             </div>
+#             <div class="col">
+#                 <label for="categorias">Categoria</label>
+#                 <select id="categorias" name="categorias">
+#                     <option selected>Todos</option>
+#                     {% for categoria in todas_categorias %}
+#                     <option value="{{ categoria }}">{{ categoria }}</option>
+#                     {% endfor %}
+#                 </select>
+#             </div>
+#             <div class="col">
+#                 <label for="produtos">Produto</label>
+#                 <select id="produtos" name="produtos">
+#                     <option selected>Todos</option>
+#                     {% for produto in todos_produtos %}
+#                     <option value="{{ produto }}">{{ produto }}</option>
+#                     {% endfor %}
+#                 </select>
+#             </div>
+#             <div class="row">
+#                 <div class="col">
+#                     <input type="checkbox" id="fornecedor_falta" name="fornecedor_falta">
+#                     <label for="fornecedor_falta">Fornecedor em falta</label>
+#                 </div>
+#                 <div class="col-5">
+#                     <input type="checkbox" id="categoria_falta" name="categoria_falta">
+#                     <label for="categoria_falta">Categoria em falta</label>
+#                 </div>
+#                 <div class="col">
+#                     <input type="checkbox" id="produtos_falta" name="produtos_falta">
+#                     <label for="produtos_falta">Produto em falta</label>
+#                 </div>
+#             </div>
+#         </div>
+#         <div class="col">
+#             <button type="submit" class="btn btn-primary">Search</button>
+#             <a href="{{add_url}}" class="btn btn-success"><span>Novo Fornecedor</span></a>
+#         </div>
+#     </form>
+# </section>

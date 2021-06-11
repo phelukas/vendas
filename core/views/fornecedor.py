@@ -3,8 +3,9 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import UpdateView
 from django.contrib import messages
 from django.shortcuts import redirect
+from django.db.models import Sum
 
-from core.models import Fornecedor
+from core.models import Fornecedor, Produtos
 
 from core.forms import FornecedoForm
 
@@ -20,7 +21,8 @@ class FornecedorLista(ListView):
         return context
 
     def get_queryset(self):
-        queryset = Fornecedor.objects.all()
+        queryset = Fornecedor.objects.aggregate(total=Sum('produto__quantidade')).filter(id=1).get('total')
+        u = Produtos.objects.annotate(total=Sum('produto__quantidade')).filter(id=1)
         return queryset
 
 

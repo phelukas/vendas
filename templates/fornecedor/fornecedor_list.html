@@ -20,13 +20,19 @@
         <tr>
             <th scope="col">Nome</th>
             <th scope="col">cnpj</th>
+            <th scope="col">Produtos</th>
+            <th scope="col">Categoria</th>
+            <th scope="col">Produtos por categorias</th>
         </tr>
     </thead>
     <tbody>
         {% for fornecedor in fornecedores %}
         <tr>
-            <td><a href="{% url 'core:editfornecedor' fornecedor.id %}">{{ fornecedor.nome }}</a></td>
-            <td>{{ fornecedor.cnpj }}</td>
+            <td><a href="{% url 'core:editfornecedor' fornecedor.id %}">{{ fornecedor.fornecedor }}</a></td>
+            <td>{{ fornecedor.fornecedor.cnpj }}</td>
+            <td>{{ fornecedor.quantidade }}</td>
+            <td>{{ fornecedor.fornecedor.cnpj }}</td>
+            <td>{{ fornecedor.fornecedor.cnpj }}</td>
         </tr>
         {% endfor %}
     </tbody>

@@ -7,14 +7,7 @@
     {% include 'base/form_error_alert.html' %}
 </div>
 
-<div class="container my-2">
-    <div class="header-btn">
-        <a href="{{add_url}}" class="btn btn-success"><span>Novo Produto</span></a>
-        <button class="btn btn-red btn-remove"></button>
-    </div>
-</div>
-
-<section class="container">
+<section>
     <form class="form-inline" method="GET">
         <div class="row">
             <div class="col">
@@ -25,6 +18,7 @@
                     <option value="{{ fornecedor }}">{{ fornecedor }}</option>
                     {% endfor %}
                 </select>
+
             </div>
             <div class="col">
                 <label for="categorias">Categoria</label>
@@ -44,9 +38,24 @@
                     {% endfor %}
                 </select>
             </div>
+            <div class="row">
+                <div class="col">
+                    <input type="checkbox" id="fornecedor_falta" name="fornecedor_falta">
+                    <label for="fornecedor_falta">Fornecedor em falta</label>
+                </div>
+                <div class="col-5">
+                    <input type="checkbox" id="categoria_falta" name="categoria_falta">
+                    <label for="categoria_falta">Categoria em falta</label>
+                </div>
+                <div class="col">
+                    <input type="checkbox" id="produtos_falta" name="produtos_falta">
+                    <label for="produtos_falta">Produto em falta</label>
+                </div>
+            </div>
         </div>
         <div class="col">
             <button type="submit" class="btn btn-primary">Search</button>
+            <a href="{{add_url}}" class="btn btn-success"><span>Novo Produto</span></a>
         </div>
     </form>
 
