@@ -1,3 +1,6 @@
+from django.db.models.aggregates import Count
+from django.db.models.expressions import Subquery
+from django.db.models.query_utils import Q
 from django.views.generic import ListView, CreateView, DeleteView
 from django.urls import reverse_lazy
 from django.views.generic.edit import UpdateView
@@ -21,10 +24,13 @@ class FornecedorLista(ListView):
         return context
 
     def get_queryset(self):
-        queryset = Fornecedor.objects.aggregate(total=Sum('produto__quantidade')).filter(id=1).get('total')
-        u = Produtos.objects.annotate(total=Sum('produto__quantidade')).filter(id=1)
-        return queryset
+        # total = Produtos.objects.aggregate(total=Sum('quantidade'))
+        # queryset = Produtos.objects.annotate(total=Sum('quantidade'))
+        # u = Produtos.objects.annotate(total=Sum('produto__quantidade')).filter(id=1)
+        queryset = Produtos.objects.select_related('fornecedor').distinct('fornecedor')
+        queryset2 = Produtos.objects.annotate(total=Subquery())
 
+        return queryset
 
 class FornecedorAdd(CreateView):
 
