@@ -24,13 +24,18 @@ class FornecedorLista(ListView):
         return context
 
     def get_queryset(self):
-        # total = Produtos.objects.aggregate(total=Sum('quantidade'))
-        # queryset = Produtos.objects.annotate(total=Sum('quantidade'))
-        # u = Produtos.objects.annotate(total=Sum('produto__quantidade')).filter(id=1)
-        queryset = Produtos.objects.select_related('fornecedor').distinct('fornecedor')
-        queryset2 = Produtos.objects.annotate(total=Subquery())
+        queryset = Fornecedor.objects.annotate(
+            quantidade_produto=Sum("fornecedores__quantidade"),
+            categorias_produto=Count("fornecedores__categoria__id", distinct=True),
+        ).order_by("nome")
+
+        print(queryset.query)
+
+        for i in queryset:
+            print(i.quantidade_produto)
 
         return queryset
+
 
 class FornecedorAdd(CreateView):
 
@@ -45,7 +50,7 @@ class FornecedorAdd(CreateView):
     def form_valid(self, form):
         messages.success(
             self.request, self.get_success_message(form.cleaned_data))
-        return redirect(self.get_success_url())     
+        return redirect(self.get_success_url())
 
     def get(self, request, *args, **kwargs):
         self.object = None
@@ -80,7 +85,7 @@ class FornecedorEdit(UpdateView):
     def form_valid(self, form):
         messages.success(
             self.request, self.get_success_message(form.cleaned_data))
-        return redirect(self.get_success_url())     
+        return redirect(self.get_success_url())
 
     def get_object(self, queryset=None):
         pk = self.kwargs.get(self.pk_url_kwarg)
@@ -108,6 +113,7 @@ class FornecedorEdit(UpdateView):
             return self.form_valid(fornecedorform)
         return self.form_invalid(form=fornecedorform)
 
+
 class FornecedorDelete(DeleteView):
 
     model = Fornecedor
@@ -117,4 +123,4 @@ class FornecedorDelete(DeleteView):
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, self.success_message)
-        return super(FornecedorDelete, self).delete(request, *args, **kwargs)        
+        return super(FornecedorDelete, self).delete(request, *args, **kwargs)

@@ -187,3 +187,19 @@ INSERT INTO core_produtos (nome, preco, quantidade, disponivel, descricao,fornec
 INSERT INTO core_produtos (nome, preco, quantidade, disponivel, descricao,fornecedor_id, categoria_id) VALUES ('Chia' , 6.71, 452, true, ' ', 5, 5);
 INSERT INTO core_produtos (nome, preco, quantidade, disponivel, descricao,fornecedor_id, categoria_id) VALUES ('Gergelim' , 5.57, 987, true, ' ', 5, 5);
 INSERT INTO core_produtos (nome, preco, quantidade, disponivel, descricao,fornecedor_id, categoria_id) VALUES ('Girassol' , 8, 142, true, ' ', 5, 5);
+
+-- select count(distinct categoria_id) from core_produtos where fornecedor_id=1;
+
+-- select 
+--     f.id ,f.nome, f.cnpj, sum(p.quantidade) as "Quantidade de Produtos", 
+--     count(distinct categoria_id) as "Categorias com Produtos "
+-- from 
+--     core_produtos p
+-- inner join 
+--     core_fornecedor f
+-- on 
+--     p.fornecedor_id=f.id
+-- group by 
+--     f.nome, f.cnpj, f.id
+-- order by 
+--     f.nome ASC;

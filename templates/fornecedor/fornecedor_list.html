@@ -5,7 +5,7 @@
 <div class="">
     {% include 'base/msg_sucesso.html' %}
     {% include 'base/form_error_alert.html' %}
-  </div>
+</div>
 
 
 <div class="my-2">
@@ -20,21 +20,20 @@
         <tr>
             <th scope="col">Nome</th>
             <th scope="col">cnpj</th>
-            <th scope="col">Produtos</th>
-            <th scope="col">Categoria</th>
+            <th scope="col">Quantidade de Produtos</th>
             <th scope="col">Produtos por categorias</th>
         </tr>
     </thead>
     <tbody>
         {% for fornecedor in fornecedores %}
         <tr>
-            <td><a href="{% url 'core:editfornecedor' fornecedor.id %}">{{ fornecedor.fornecedor }}</a></td>
-            <td>{{ fornecedor.fornecedor.cnpj }}</td>
-            <td>{{ fornecedor.quantidade }}</td>
-            <td>{{ fornecedor.fornecedor.cnpj }}</td>
-            <td>{{ fornecedor.fornecedor.cnpj }}</td>
+            <td><a href="{% url 'core:editfornecedor' fornecedor.id %}">{{ fornecedor.nome }}</a></td>
+            <td>{{ fornecedor.cnpj }}</td>
+            <td>{{ fornecedor.quantidade_produto }}</td>
+            <td>{{ fornecedor.categorias_produto }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
 {%endblock%}

@@ -4,13 +4,17 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView
 from django.contrib import messages
 from django.shortcuts import redirect
+from django.core.paginator import Paginator ,EmptyPage, PageNotAnInteger
 import xlwt
-from django.http import HttpResponse
 
 from core.models import Produtos, Fornecedor, Categoria
 
 from core.forms import ProdutoForm
 
+
+def get_queryset(self):
+    queryset = Produtos.objects.all()
+    return queryset
 
 def is_valid_queryparam(param):
     return param != '' and param != 'Todos' and param is not None
@@ -63,7 +67,7 @@ class PodutosLista(ListView):
 
     template_name = 'produtos/produtos_list.html'
     context_object_name = 'produtos'
-
+    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         context = super(PodutosLista, self).get_context_data(**kwargs)
@@ -86,8 +90,6 @@ class PodutosLista(ListView):
         fornecedor_falta = request.GET.get('fornecedor_falta')
         categoria_falta = request.GET.get('categoria_falta')
         produtos_falta = request.GET.get('produtos_falta')
-
-        print(produtos_falta)
 
         if is_valid_queryparam(produtos_falta):
             self.object_list = self.object_list.filter(
