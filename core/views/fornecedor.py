@@ -1,6 +1,4 @@
 from django.db.models.aggregates import Count
-from django.db.models.expressions import Subquery
-from django.db.models.query_utils import Q
 from django.views.generic import ListView, CreateView, DeleteView
 from django.urls import reverse_lazy
 from django.views.generic.edit import UpdateView
@@ -8,7 +6,7 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.db.models import Sum
 
-from core.models import Fornecedor, Produtos
+from core.models import Fornecedor
 
 from core.forms import FornecedoForm
 
@@ -28,11 +26,6 @@ class FornecedorLista(ListView):
             quantidade_produto=Sum("fornecedores__quantidade"),
             categorias_produto=Count("fornecedores__categoria__id", distinct=True),
         ).order_by("nome")
-
-        print(queryset.query)
-
-        for i in queryset:
-            print(i.quantidade_produto)
 
         return queryset
 

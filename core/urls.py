@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^exportar_execl/prodfalta/$', views.ExportarExcel_prod_falta.as_view(), name='relatorio_excel_prod_falta'),
 
     url(r'^produtos/$', views.PodutosLista.as_view(), name='listprodutos'),
+    url(r'^produtos/teste_view/$', views.teste_view),
     url(r'^addproduto/$', views.ProdutosAdicionar.as_view(), name='addproduto'),
     url(r'^addproduto/(?P<pk>[0-9]+)/$', views.ProdutoEdit.as_view(), name='editproduto'),
     url(r'^produto/deletar/(?P<pk>[0-9]+)/$', views.ProdutoDelete.as_view(), name='delproduto'),
