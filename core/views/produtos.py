@@ -1,12 +1,13 @@
 from django.db.models.query import QuerySet
 from django.views.generic import ListView, CreateView, DeleteView
 from django.urls import reverse_lazy
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import UpdateView
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-import xlwt
+import json
+from django.http import JsonResponse
 from django.core import serializers
 from django.http import HttpResponse
 
@@ -14,11 +15,6 @@ from django.http import HttpResponse
 from core.models import Produtos, Fornecedor, Categoria
 
 from core.forms import ProdutoForm
-
-
-def get_queryset(self):
-    queryset = Produtos.objects.all()
-    return queryset
 
 
 def is_valid_queryparam(param):
@@ -57,6 +53,18 @@ def is_valid_queryparam(param):
 class Index(TemplateView):
     template_name = 'base/index.html'
 
+class Teste_view(View):
+
+    def post(self, request, *args, **kwargs):
+        forncedores = request.POST.get("forncedores")
+        categorias = request.POST.get("categorias")
+        produtos = request.POST.get("produtos")
+        response = json.dumps({
+            'forncedores': forncedores,
+            'categorias': categorias,
+            'produtos': produtos
+        })
+        return HttpResponse(response, content_type="application/json")
 
 def teste_view(request):
     forncedores = request.GET["forncedores"]
@@ -87,7 +95,7 @@ def teste_view(request):
         queryset = queryset.all()
 
     qu_json = serializers.serialize("json", queryset)
-    return HttpResponse(qu_json, content_type="application/json")
+    return HttpResponse(json.dumps(qu_json), content_type="application/json")
 
 class PodutosLista(ListView):
 
@@ -107,6 +115,20 @@ class PodutosLista(ListView):
         queryset = Produtos.objects.none()
         return queryset
 
+    def post(self, request, *args, **kwargs):
+        forncedores = request.POST.get("forncedores")
+        categorias = request.POST.get("categorias")
+        produtos = request.POST.get("produtos")
+        response = {
+            'forncedores': forncedores,
+            'categorias': categorias,
+            'produtos': produtos
+        }
+        print(response)
+        teste = Produtos.objects.filter(
+            fornecedor__cnpj=
+        )
+        return HttpResponse(response)
 
 
 class ProdutosAdicionar(CreateView):
