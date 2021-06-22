@@ -9,7 +9,7 @@
 </div>
 
 <section>
-    <form action="">
+    <form role="form" method="POST" enctype="multipart/form-data" action="">
         {% csrf_token %}
         <div class="row">
             <div class="col">
@@ -55,13 +55,13 @@
                 </div>
             </div>
         </div>
+        <div class="col">
+            <button id="search" type="submit" class="btn btn-primary">Search</button>
+            <a href="{{add_url}}" class="btn btn-success"><span>Novo Produto</span></a>
+        </div>
     </form>
 
-    <div class="col">
-        <button id="search" onclick="teste()" type="button" class="btn btn-primary">Search</button>
-        <a href="{{add_url}}" class="btn btn-success"><span>Novo Produto</span></a>
-    </div>
-    <h1>{{response}}</h1>
+
     <table class="table table-striped">
         <thead>
             <tr>
@@ -75,7 +75,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for produto in response %}
+            {% for produto in produtos %}
             <tr>
                 <td><a href="{% url 'core:editproduto' produto.id %}">{{ produto.nome }}</a></td>
                 <td>{{ produto.quantidade }}</td>
@@ -140,24 +140,4 @@
 {% block static %}
 <script src="{% static 'js/jquery.js' %}"></script>
 
-<script>
-    function teste() {
-        forncedores = document.getElementById("forncedores").value;
-        categorias = document.getElementById("categorias").value;
-        produtos = document.getElementById("produtos").value;
-        token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
-
-        $.ajax({
-            type: 'POST',
-            url: '/produtos/',
-            data: {
-                forncedores: forncedores,
-                categorias: categorias,
-                produtos: produtos,
-                csrfmiddlewaretoken: token
-            }
-        })
-    }
-
-</script>
 {% endblock %}

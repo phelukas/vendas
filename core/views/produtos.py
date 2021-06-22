@@ -54,58 +54,10 @@ class Index(TemplateView):
     template_name = 'base/index.html'
 
 
-class Teste_view(View):
-
-    def post(self, request, *args, **kwargs):
-        forncedores = request.POST.get("forncedores")
-        categorias = request.POST.get("categorias")
-        produtos = request.POST.get("produtos")
-        response = json.dumps({
-            'forncedores': forncedores,
-            'categorias': categorias,
-            'produtos': produtos
-        })
-        return HttpResponse(response, content_type="application/json")
-
-
-def teste_view(request):
-    forncedores = request.GET["forncedores"]
-    categorias = request.GET["categorias"]
-    produtos = request.GET["produtos"]
-
-    queryset = Produtos.objects.all()
-
-    if is_valid_queryparam(produtos):
-        queryset = queryset.filter(
-            nome=produtos
-        )
-    else:
-        queryset = queryset.all()
-
-    if is_valid_queryparam(categorias):
-        queryset = queryset.filter(
-            categoria__nome=categorias
-        )
-    else:
-        queryset = queryset.all()
-
-    if is_valid_queryparam(forncedores):
-        queryset = queryset.filter(
-            fornecedor__cnpj=forncedores
-        )
-    else:
-        queryset = queryset.all()
-
-    qu_json = serializers.serialize("json", queryset)
-    return HttpResponse(json.dumps(qu_json), content_type="application/json")
-
-
 class PodutosLista(ListView):
 
     template_name = 'produtos/produtos_list.html'
     context_object_name = 'produtos'
-    paginate_by = 10
-    queryset = Produtos.objects.none()
 
     def get_context_data(self, **kwargs):
         context = super(PodutosLista, self).get_context_data(**kwargs)
@@ -114,22 +66,49 @@ class PodutosLista(ListView):
         context['todas_categorias'] = Categoria.objects.all()
         context['todos_produtos'] = Produtos.objects.distinct('nome')
         return context
-
-    # self.queryset = self.filter(self.get_queryset())
-    # return super(MyView, self).get(request, *args, **kwargs)
+    
+    def get_queryset(self):
+        queryset = Produtos.objects.none()
+        return super().get_queryset()
+    
 
     def post(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        forncedores = request.POST.get("forncedores")
-        categorias = request.POST.get("categorias")
-        produtos = request.POST.get("produtos")
-        response = {
-            'fornecedor__cnpj': forncedores,
-            'categoria__nome': categorias,
-            'nome': produtos
-        }
-        self.queryset = Produtos.objects.all()
-        return HttpResponse(self.get_context_data(response=response))
+        self.object_list = Produtos.objects
+
+        forncedores = self.request.POST.get("forncedores")
+        categorias = self.request.POST.get("categorias")
+        produtos = self.request.POST.get("produtos")
+
+        print(forncedores)
+        print(categorias)
+        print(produtos)
+
+        if is_valid_queryparam(produtos):
+            self.object_list = self.object_list.filter(
+                nome=produtos
+            )
+        else:
+            self.object_list = self.object_list.all()
+
+        if is_valid_queryparam(categorias):
+            self.object_list = self.object_list.filter(
+                categoria__nome=categorias
+            )
+        else:
+            self.object_list = self.object_list.all()
+
+        if is_valid_queryparam(forncedores):
+            self.object_list = self.object_list.filter(
+                fornecedor__cnpj=forncedores
+            )
+        else:
+            self.object_list = self.object_list.all()
+
+        print(self.object_list.count())
+
+
+        return self.render_to_response(self.get_context_data())
+
 
 
 class ProdutosAdicionar(CreateView):
@@ -225,56 +204,3 @@ class ProdutoDelete(DeleteView):
         messages.success(self.request, self.success_message)
         return super(ProdutoDelete, self).delete(request, *args, **kwargs)
 
-
-# <section>
-#     <form class="form-inline" method="GET">
-#         <div class="row">
-#             <div class="col">
-#                 <label for="forncedores">Fornecedor</label>
-#                 <select id="forncedores" name="forncedores">
-#                     <option selected>Todos</option>
-#                     {% for fornecedor in todos_fornecedores %}
-#                     <option value="{{ fornecedor }}">{{ fornecedor }}</option>
-#                     {% endfor %}
-#                 </select>
-
-#             </div>
-#             <div class="col">
-#                 <label for="categorias">Categoria</label>
-#                 <select id="categorias" name="categorias">
-#                     <option selected>Todos</option>
-#                     {% for categoria in todas_categorias %}
-#                     <option value="{{ categoria }}">{{ categoria }}</option>
-#                     {% endfor %}
-#                 </select>
-#             </div>
-#             <div class="col">
-#                 <label for="produtos">Produto</label>
-#                 <select id="produtos" name="produtos">
-#                     <option selected>Todos</option>
-#                     {% for produto in todos_produtos %}
-#                     <option value="{{ produto }}">{{ produto }}</option>
-#                     {% endfor %}
-#                 </select>
-#             </div>
-#             <div class="row">
-#                 <div class="col">
-#                     <input type="checkbox" id="fornecedor_falta" name="fornecedor_falta">
-#                     <label for="fornecedor_falta">Fornecedor em falta</label>
-#                 </div>
-#                 <div class="col-5">
-#                     <input type="checkbox" id="categoria_falta" name="categoria_falta">
-#                     <label for="categoria_falta">Categoria em falta</label>
-#                 </div>
-#                 <div class="col">
-#                     <input type="checkbox" id="produtos_falta" name="produtos_falta">
-#                     <label for="produtos_falta">Produto em falta</label>
-#                 </div>
-#             </div>
-#         </div>
-#         <div class="col">
-#             <button type="submit" class="btn btn-primary">Search</button>
-#             <a href="{{add_url}}" class="btn btn-success"><span>Novo Fornecedor</span></a>
-#         </div>
-#     </form>
-# </section>
