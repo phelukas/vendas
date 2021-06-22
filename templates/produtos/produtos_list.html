@@ -9,58 +9,85 @@
 </div>
 
 <section>
-
-    <div class="row">
-        <div class="col">
-            <label for="forncedores">Fornecedor</label>
-            <select id="forncedores" name="forncedores">
-                <option selected>Todos</option>
-                {% for fornecedor in todos_fornecedores %}
-                <option value="{{ fornecedor }}">{{ fornecedor }}</option>
-                {% endfor %}
-            </select>
-
-        </div>
-        <div class="col">
-            <label for="categorias">Categoria</label>
-            <select id="categorias" name="categorias">
-                <option selected>Todos</option>
-                {% for categoria in todas_categorias %}
-                <option value="{{ categoria }}">{{ categoria }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col">
-            <label for="produtos">Produto</label>
-            <select id="produtos" name="produtos">
-                <option selected>Todos</option>
-                {% for produto in todos_produtos %}
-                <option value="{{ produto }}">{{ produto }}</option>
-                {% endfor %}
-            </select>
-        </div>
+    <form action="">
+        {% csrf_token %}
         <div class="row">
             <div class="col">
-                <input type="checkbox" id="fornecedor_falta" name="fornecedor_falta">
-                <label for="fornecedor_falta">Fornecedor em falta</label>
-            </div>
-            <div class="col-5">
-                <input type="checkbox" id="categoria_falta" name="categoria_falta">
-                <label for="categoria_falta">Categoria em falta</label>
+                <label for="forncedores">Fornecedor</label>
+                <select id="forncedores" name="forncedores">
+                    <option selected>Todos</option>
+                    {% for fornecedor in todos_fornecedores %}
+                    <option value="{{ fornecedor }}">{{ fornecedor }}</option>
+                    {% endfor %}
+                </select>
+
             </div>
             <div class="col">
-                <input type="checkbox" id="produtos_falta" name="produtos_falta">
-                <label for="produtos_falta">Produto em falta</label>
+                <label for="categorias">Categoria</label>
+                <select id="categorias" name="categorias">
+                    <option selected>Todos</option>
+                    {% for categoria in todas_categorias %}
+                    <option value="{{ categoria }}">{{ categoria }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col">
+                <label for="produtos">Produto</label>
+                <select id="produtos" name="produtos">
+                    <option selected>Todos</option>
+                    {% for produto in todos_produtos %}
+                    <option value="{{ produto }}">{{ produto }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <input type="checkbox" id="fornecedor_falta" name="fornecedor_falta">
+                    <label for="fornecedor_falta">Fornecedor em falta</label>
+                </div>
+                <div class="col-5">
+                    <input type="checkbox" id="categoria_falta" name="categoria_falta">
+                    <label for="categoria_falta">Categoria em falta</label>
+                </div>
+                <div class="col">
+                    <input type="checkbox" id="produtos_falta" name="produtos_falta">
+                    <label for="produtos_falta">Produto em falta</label>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
+
     <div class="col">
         <button id="search" onclick="teste()" type="button" class="btn btn-primary">Search</button>
         <a href="{{add_url}}" class="btn btn-success"><span>Novo Produto</span></a>
     </div>
-    <div id="div_teste">
-        {% include 'produtos/teste.html' %}
-    </div>
+    <h1>{{response}}</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Produto</th>
+                <th scope="col">Quantidade</th>
+                <th scope="col">Categoria</th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Preço</th>
+                <th scope="col">Fornecedor</th>
+                <th scope="col">Disponivel</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produto in response %}
+            <tr>
+                <td><a href="{% url 'core:editproduto' produto.id %}">{{ produto.nome }}</a></td>
+                <td>{{ produto.quantidade }}</td>
+                <td>{{ produto.categoria }}</td>
+                <td>{{ produto.descricao }}</td>
+                <td>{{ produto.preco }}</td>
+                <td>{{ produto.fornecedor }}</td>
+                <td>{{ produto.disponivel }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     <!--Pagination-->
     <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-center">
@@ -118,19 +145,16 @@
         forncedores = document.getElementById("forncedores").value;
         categorias = document.getElementById("categorias").value;
         produtos = document.getElementById("produtos").value;
-        div_teste = document.getElementById("div_teste");
-        div_teste.innerHTML = "";
+        token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: '/produtos/',
             data: {
                 forncedores: forncedores,
                 categorias: categorias,
-                produtos: produtos
-            },
-            success: function (result) {
-                console.log(result);
-                $("#msg").text(result)
+                produtos: produtos,
+                csrfmiddlewaretoken: token
             }
         })
     }

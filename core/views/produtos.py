@@ -53,6 +53,7 @@ def is_valid_queryparam(param):
 class Index(TemplateView):
     template_name = 'base/index.html'
 
+
 class Teste_view(View):
 
     def post(self, request, *args, **kwargs):
@@ -65,6 +66,7 @@ class Teste_view(View):
             'produtos': produtos
         })
         return HttpResponse(response, content_type="application/json")
+
 
 def teste_view(request):
     forncedores = request.GET["forncedores"]
@@ -97,11 +99,13 @@ def teste_view(request):
     qu_json = serializers.serialize("json", queryset)
     return HttpResponse(json.dumps(qu_json), content_type="application/json")
 
+
 class PodutosLista(ListView):
 
     template_name = 'produtos/produtos_list.html'
     context_object_name = 'produtos'
     paginate_by = 10
+    queryset = Produtos.objects.none()
 
     def get_context_data(self, **kwargs):
         context = super(PodutosLista, self).get_context_data(**kwargs)
@@ -111,24 +115,21 @@ class PodutosLista(ListView):
         context['todos_produtos'] = Produtos.objects.distinct('nome')
         return context
 
-    def get_queryset(self):
-        queryset = Produtos.objects.none()
-        return queryset
+    # self.queryset = self.filter(self.get_queryset())
+    # return super(MyView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
         forncedores = request.POST.get("forncedores")
         categorias = request.POST.get("categorias")
         produtos = request.POST.get("produtos")
         response = {
-            'forncedores': forncedores,
-            'categorias': categorias,
-            'produtos': produtos
+            'fornecedor__cnpj': forncedores,
+            'categoria__nome': categorias,
+            'nome': produtos
         }
-        print(response)
-        teste = Produtos.objects.filter(
-            fornecedor__cnpj=
-        )
-        return HttpResponse(response)
+        self.queryset = Produtos.objects.all()
+        return HttpResponse(self.get_context_data(response=response))
 
 
 class ProdutosAdicionar(CreateView):
