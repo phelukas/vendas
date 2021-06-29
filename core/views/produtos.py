@@ -58,6 +58,7 @@ class PodutosLista(ListView):
 
     template_name = 'produtos/produtos_list.html'
     context_object_name = 'produtos'
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         context = super(PodutosLista, self).get_context_data(**kwargs)
@@ -66,48 +67,66 @@ class PodutosLista(ListView):
         context['todas_categorias'] = Categoria.objects.all()
         context['todos_produtos'] = Produtos.objects.distinct('nome')
         return context
-    
+
     def get_queryset(self):
-        queryset = Produtos.objects.none()
-        return super().get_queryset()
-    
+        queryset = Produtos.objects.all()
 
-    def post(self, request, *args, **kwargs):
-        self.object_list = Produtos.objects
-
-        forncedores = self.request.POST.get("forncedores")
-        categorias = self.request.POST.get("categorias")
-        produtos = self.request.POST.get("produtos")
-
-        print(forncedores)
-        print(categorias)
-        print(produtos)
+        forncedores = self.request.GET.get("forncedores")
+        categorias = self.request.GET.get("categorias")
+        produtos = self.request.GET.get("produtos")
 
         if is_valid_queryparam(produtos):
-            self.object_list = self.object_list.filter(
+            queryset = queryset.filter(
                 nome=produtos
             )
-        else:
-            self.object_list = self.object_list.all()
 
         if is_valid_queryparam(categorias):
-            self.object_list = self.object_list.filter(
+            queryset = queryset.filter(
                 categoria__nome=categorias
             )
-        else:
-            self.object_list = self.object_list.all()
 
         if is_valid_queryparam(forncedores):
-            self.object_list = self.object_list.filter(
+            queryset = queryset.filter(
                 fornecedor__cnpj=forncedores
             )
-        else:
-            self.object_list = self.object_list.all()
 
-        print(self.object_list.count())
+        return queryset
+            
 
+    # def get(self, request, *args, **kwargs):
+    #     self.object_list = self.queryset
 
-        return self.render_to_response(self.get_context_data())
+    #     return super().get(request, *args, **kwargs)        
+
+    # def post(self, request, *args, **kwargs):
+    #     self.object_list = Produtos.objects
+
+    #     forncedores = self.request.POST.get("forncedores")
+    #     categorias = self.request.POST.get("categorias")
+    #     produtos = self.request.POST.get("produtos")
+
+    #     if is_valid_queryparam(produtos):
+    #         self.object_list = self.object_list.filter(
+    #             nome=produtos
+    #         )
+    #     else:
+    #         self.object_list = self.object_list.all()
+
+    #     if is_valid_queryparam(categorias):
+    #         self.object_list = self.object_list.filter(
+    #             categoria__nome=categorias
+    #         )
+    #     else:
+    #         self.object_list = self.object_list.all()
+
+    #     if is_valid_queryparam(forncedores):
+    #         self.object_list = self.object_list.filter(
+    #             fornecedor__cnpj=forncedores
+    #         )
+    #     else:
+    #         self.object_list = self.object_list.all()
+
+    #     return self.render_to_response(self.get_context_data())
 
 
 
