@@ -1,16 +1,9 @@
-from django.db.models.query import QuerySet
 from django.views.generic import ListView, CreateView, DeleteView
 from django.urls import reverse_lazy
-from django.views.generic.base import TemplateView, View
+from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView
 from django.contrib import messages
 from django.shortcuts import redirect
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-import json
-from django.http import JsonResponse
-from django.core import serializers
-from django.http import HttpResponse
-
 
 from core.models import Produtos, Fornecedor, Categoria
 
@@ -19,35 +12,6 @@ from core.forms import ProdutoForm
 
 def is_valid_queryparam(param):
     return param != '' and param != 'Todos' and param is not None
-
-# def ExportarExcel(queryset):
-#     response = HttpResponse(content_type='application/ms-excel')
-#     response['Content-Disposition'] = 'attachment; filename="Produtos em Falta.xls"'
-#     wb = xlwt.Workbook(encoding='utf-8')
-#     ws = wb.add_sheet('i')
-#     row_num = 0
-#     font_style = xlwt.XFStyle()
-#     font_style.font.bold = True
-#     columns = ['Id','Produto', 'Quantidade']
-#     for col_num in range(len(columns)):
-#         ws.write(row_num, col_num, columns[col_num], font_style)
-#     font_style = xlwt.XFStyle()
-#     queryset = queryset
-#     row_num = 1
-#     for produto in queryset:
-#         ws.write(row_num, 0, produto.id, font_style)
-#         ws.write(row_num, 1, produto.nome, font_style)
-#         ws.write(row_num, 2, produto.quantidade, font_style)
-#         row_num += 1
-#     # Create a StringIO object.
-#     output = StringIO.StringIO()
-#     # Save the workbook data to the above StringIO object.
-#     wb.save(output)
-#     # Reposition to the beginning of the StringIO object.
-#     output.seek(0)
-#     # Write the StringIO object's value to HTTP response to send the excel file to the web server client.
-#     response.write(output.getvalue())
-#     return response
 
 
 class Index(TemplateView):
@@ -58,7 +22,6 @@ class PodutosLista(ListView):
 
     template_name = 'produtos/produtos_list.html'
     context_object_name = 'produtos'
-    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         context = super(PodutosLista, self).get_context_data(**kwargs)
@@ -71,62 +34,38 @@ class PodutosLista(ListView):
     def get_queryset(self):
         queryset = Produtos.objects.all()
 
-        forncedores = self.request.GET.get("forncedores")
-        categorias = self.request.GET.get("categorias")
-        produtos = self.request.GET.get("produtos")
-
-        if is_valid_queryparam(produtos):
-            queryset = queryset.filter(
-                nome=produtos
-            )
-
-        if is_valid_queryparam(categorias):
-            queryset = queryset.filter(
-                categoria__nome=categorias
-            )
-
-        if is_valid_queryparam(forncedores):
-            queryset = queryset.filter(
-                fornecedor__cnpj=forncedores
-            )
-
         return queryset
             
 
-    # def get(self, request, *args, **kwargs):
-    #     self.object_list = self.queryset
+    def post(self, request, *args, **kwargs):
+        self.object_list = Produtos.objects
 
-    #     return super().get(request, *args, **kwargs)        
+        forncedores = self.request.POST.get("forncedores")
+        categorias = self.request.POST.get("categorias")
+        produtos = self.request.POST.get("produtos")
 
-    # def post(self, request, *args, **kwargs):
-    #     self.object_list = Produtos.objects
+        if is_valid_queryparam(produtos):
+            self.object_list = self.object_list.filter(
+                nome=produtos
+            )
+        else:
+            self.object_list = self.object_list.all()
 
-    #     forncedores = self.request.POST.get("forncedores")
-    #     categorias = self.request.POST.get("categorias")
-    #     produtos = self.request.POST.get("produtos")
+        if is_valid_queryparam(categorias):
+            self.object_list = self.object_list.filter(
+                categoria__nome=categorias
+            )
+        else:
+            self.object_list = self.object_list.all()
 
-    #     if is_valid_queryparam(produtos):
-    #         self.object_list = self.object_list.filter(
-    #             nome=produtos
-    #         )
-    #     else:
-    #         self.object_list = self.object_list.all()
+        if is_valid_queryparam(forncedores):
+            self.object_list = self.object_list.filter(
+                fornecedor__cnpj=forncedores
+            )
+        else:
+            self.object_list = self.object_list.all()
 
-    #     if is_valid_queryparam(categorias):
-    #         self.object_list = self.object_list.filter(
-    #             categoria__nome=categorias
-    #         )
-    #     else:
-    #         self.object_list = self.object_list.all()
-
-    #     if is_valid_queryparam(forncedores):
-    #         self.object_list = self.object_list.filter(
-    #             fornecedor__cnpj=forncedores
-    #         )
-    #     else:
-    #         self.object_list = self.object_list.all()
-
-    #     return self.render_to_response(self.get_context_data())
+        return self.render_to_response(self.get_context_data())
 
 
 

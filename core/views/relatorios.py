@@ -1,11 +1,9 @@
 from django.db.models.aggregates import Sum
-from django.views.generic import ListView, CreateView, DeleteView
+from django.views.generic import ListView
 from django.urls import reverse_lazy
 from django.views.generic.base import View
-from django.views.generic.edit import UpdateView
-from django.db.models import Count
-from django.http import HttpResponse, response
-from core.models import Produtos, Categoria, Fornecedor, Item, Ordem
+from django.http import HttpResponse
+from core.models import Produtos, Categoria
 import csv
 import xlwt
 
